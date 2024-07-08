@@ -5,8 +5,8 @@ import 'package:prayas_capital/core/app_export.dart';
 class StockinfoItemWidget extends StatelessWidget {
   const StockinfoItemWidget({Key? key})
       : super(
-          key: key,
-        );
+    key: key,
+  );
 
   @override
   Widget build(BuildContext context) {

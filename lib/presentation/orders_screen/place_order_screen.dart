@@ -464,6 +464,8 @@ Widget option_details_text_widget(
 */
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 import 'package:prayas_capital/core/app_export.dart';
 import 'package:prayas_capital/core/utils/ColorFile.dart';
 import 'package:prayas_capital/core/utils/StringFile.dart';
@@ -478,19 +480,56 @@ class PlaceOrderScreen extends StatefulWidget {
 }
 
 class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
-  TextEditingController? lotsTextEditingController;
-  TextEditingController? enterPriceTextEditingController;
-  late FocusNode lotsFocusNode;
-  late FocusNode enterPriceFocusNode;
+  final TextEditingController lotsTextEditingController = TextEditingController();
+  final TextEditingController enterPriceTextEditingController = TextEditingController();
+  final FocusNode lotsFocusNode = FocusNode();
+  final FocusNode enterPriceFocusNode = FocusNode();
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    lotsTextEditingController = TextEditingController(text: "1");
-    enterPriceTextEditingController = TextEditingController(text: "0.40");
-    lotsFocusNode = FocusNode();
-    enterPriceFocusNode = FocusNode();
+    // lotsTextEditingController = TextEditingController(text: "1");
+    // enterPriceTextEditingController = TextEditingController(text: "0.40");
+    // lotsFocusNode = FocusNode();
+    // enterPriceFocusNode = FocusNode();
+  }
+
+  void handleAddButton(Map<String, dynamic> item) async {
+    final response = await http.post(
+      Uri.parse('http://prayascapital.com:5000/orders/create'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(item),
+    );
+
+    if (response.statusCode == 200) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Item added successfully!'),
+      ));
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Failed to add item.'),
+      ));
+    }
+  }
+
+  void submitOrder() {
+    final String lots = lotsTextEditingController.text;
+    final String price = enterPriceTextEditingController.text;
+    final Map<String, dynamic> item = {
+      'lots': lots,
+      'price': price,
+      'unique_name': 'NIFTY_50',
+      'nature': 1,
+      'type': 'Market',
+      'quantity': 2,
+      'user_id': 1,
+      'ip_address': '192.168.667.332'
+    };
+
+    handleAddButton(item);
   }
 
   @override
@@ -498,7 +537,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        title: TextView(text: MyString.placeOrder, textColor: AppColors.white),
+        title: Text('Place Order'),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -508,7 +547,6 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                 option_details_widget(context: context),
                 Padding(
                   padding: EdgeInsets.only(
-                    //  top: MediaQuery.sizeOf(context).height / 4.2,
                     top: 216.h,
                   ),
                   child: SingleChildScrollView(
@@ -521,11 +559,9 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                       child: Container(
                         padding: EdgeInsets.only(bottom: 20.h),
                         decoration: BoxDecoration(
-                          color: AppColors.white,
+                          color: Colors.white,
                           borderRadius: BorderRadius.circular(15),
                         ),
-                        // height: MediaQuery.sizeOf(context).height / 1.9,
-                        // height: 300,
                         child: Padding(
                           padding: EdgeInsets.symmetric(horizontal: 20),
                           child: Column(
@@ -540,7 +576,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                                       width: 50.h,
                                       height: 3,
                                       decoration: BoxDecoration(
-                                        color: AppColors.blackShade2,
+                                        color: Colors.black,
                                       ),
                                     ),
                                   ),
@@ -554,35 +590,25 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                                     Text(
                                       "Quantity",
                                       style: TextStyle(
-                                        color: AppColors.blackShade9,
+                                        color: Colors.black,
                                         fontWeight: FontWeight.w500,
                                         fontSize: 16,
                                       ),
                                     ),
-                                    TextView(
-                                        text: "Lot: 50",
-                                        fontWeight: FontWeight.w400,
-                                        textColor: AppColors.blackShade9,
-                                        textSize: 13),
+                                    Text("Lot: 50"),
                                     Text(
                                       "Price",
                                       style: TextStyle(
-                                        color: AppColors.blackShade9,
+                                        color: Colors.black,
                                         fontWeight: FontWeight.w500,
                                         fontSize: 16,
                                       ),
                                     ),
-                                    TextView(
-                                        text: "Tick: 0.05",
-                                        fontWeight: FontWeight.w400,
-                                        textColor: AppColors.blackShade9,
-                                        textSize: 13),
+                                    Text("Tick: 0.05"),
                                   ],
                                 ),
                               ),
-                              SizedBox(
-                                height: 8,
-                              ),
+                              SizedBox(height: 8),
                               Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
@@ -598,28 +624,27 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                                             label: Text("Enter Lots"),
                                             labelStyle: TextStyle(
                                               color: lotsFocusNode.hasFocus
-                                                  ? AppColors.black
-                                                  : AppColors.blackShade9,
+                                                  ? Colors.black
+                                                  : Colors.black38,
                                               fontWeight: lotsFocusNode.hasFocus
                                                   ? FontWeight.w500
                                                   : FontWeight.w400,
                                             ),
                                             enabledBorder: OutlineInputBorder(
                                               borderSide: BorderSide(
-                                                  color: AppColors.blackShade9),
+                                                  color: Colors.black38),
                                             ),
                                             focusedBorder: OutlineInputBorder(
                                                 borderSide: BorderSide(
-                                                  color: AppColors.black,
+                                                  color: Colors.black,
                                                   width: 2,
                                                 )),
-                                            focusColor: AppColors.black,
+                                            focusColor: Colors.black,
                                             border: OutlineInputBorder(
                                                 borderSide: BorderSide(
-                                                  color: AppColors.blackShade9,
+                                                  color: Colors.black38,
                                                 )),
                                             alignLabelWithHint: true,
-                                            // labelText: "Enter Lots"
                                           ),
                                         ),
                                       ),
@@ -640,8 +665,8 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                                             label: Text("Enter Price"),
                                             labelStyle: TextStyle(
                                               color: enterPriceFocusNode.hasFocus
-                                                  ? AppColors.black
-                                                  : AppColors.blackShade9,
+                                                  ? Colors.black
+                                                  : Colors.black38,
                                               fontWeight:
                                               enterPriceFocusNode.hasFocus
                                                   ? FontWeight.w500
@@ -649,39 +674,34 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                                             ),
                                             enabledBorder: OutlineInputBorder(
                                               borderSide: BorderSide(
-                                                  color: AppColors.blackShade9),
+                                                  color: Colors.black38),
                                             ),
                                             focusedBorder: OutlineInputBorder(
                                                 borderSide: BorderSide(
-                                                  color: AppColors.black,
+                                                  color: Colors.black,
                                                   width: 2,
                                                 )),
-                                            focusColor: AppColors.black,
+                                            focusColor: Colors.black,
                                             border: OutlineInputBorder(
                                                 borderSide: BorderSide(
-                                                  color: AppColors.blackShade9,
+                                                  color: Colors.black38,
                                                 )),
                                             alignLabelWithHint: true,
-                                            // labelText: "Enter Lots"
                                           ),
                                         ),
                                       ),
                                     ),
                                   ]),
-                              SizedBox(
-                                height: 20,
-                              ),
+                              SizedBox(height: 20),
                               Text(
                                 "Order Nature",
                                 style: TextStyle(
-                                  color: AppColors.blackShade9,
+                                  color: Colors.black,
                                   fontWeight: FontWeight.w500,
                                   fontSize: 17,
                                 ),
                               ),
-                              SizedBox(
-                                height: 10,
-                              ),
+                              SizedBox(height: 10),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
@@ -703,20 +723,16 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                                   ),
                                 ],
                               ),
-                              SizedBox(
-                                height: 10,
-                              ),
+                              SizedBox(height: 10),
                               Text(
                                 "Type",
                                 style: TextStyle(
-                                  color: AppColors.blackShade9,
+                                  color: Colors.black,
                                   fontWeight: FontWeight.w500,
                                   fontSize: 17,
                                 ),
                               ),
-                              SizedBox(
-                                height: 10,
-                              ),
+                              SizedBox(height: 10),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
@@ -746,11 +762,9 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                                   ),
                                 ],
                               ),
-                              SizedBox(
-                                height: 20,
-                              ),
+                              SizedBox(height: 20),
                               Padding(
-                                padding:  EdgeInsets.only(bottom: 10.h),
+                                padding: EdgeInsets.only(bottom: 10.h),
                                 child: Column(
                                   children: [
                                     Row(
@@ -760,14 +774,14 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                                         Text(
                                           "Approx. margin (Buy)",
                                           style: TextStyle(
-                                            color: AppColors.blackShade9,
+                                            color: Colors.black,
                                             fontWeight: FontWeight.w500,
                                           ),
                                         ),
                                         Text(
                                           "Approx. margin (Sell)",
                                           style: TextStyle(
-                                            color: AppColors.blackShade9,
+                                            color: Colors.black,
                                             fontWeight: FontWeight.w500,
                                           ),
                                         ),
@@ -789,18 +803,18 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                                 children: [
                                   InkWell(
                                     onTap: () {
+                                      submitOrder();
                                     },
-                                    child: Container(
-                                      height: 50.h,
-                                      alignment: Alignment.center,
-                                      width: MediaQuery.of(context).size.width / 2.8,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(5),
-                                        border: Border.all(
-                                          color: AppColors.green,
-                                        ),
+                                    child: ElevatedButton(
+                                      child: Text("BUY"),
+                                      style: ElevatedButton.styleFrom(
+                                        foregroundColor: Colors.white,
+                                        backgroundColor: Colors.green,
+                                        elevation: 0,
                                       ),
-                                      child: TextView(text: "BUY",textColor: AppColors.green,textSize: 24),
+                                      onPressed: () {
+                                        submitOrder();
+                                      },
                                     ),
                                   ),
                                   InkWell(
@@ -812,13 +826,12 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                                       decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(5),
                                         border: Border.all(
-                                            color: AppColors.red
+                                            color: Colors.red
                                         ),
                                       ),
-                                      child: TextView(text:"SELL",textSize: 24,textColor: AppColors.red),
+                                      child: Text("SELL", style: TextStyle(fontSize: 24, color: Colors.red)),
                                     ),
                                   ),
-
                                 ],
                               ),
                             ],

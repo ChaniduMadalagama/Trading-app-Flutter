@@ -37,7 +37,7 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: CustomeAppBar(appBarTitle: MyString.watchlist, context: context),
       body: Container(
         width: double.maxFinite,
-        height: MediaQuery.of(context).size.height,
+        height: 900,
         child: NestedScrollView(
           physics: const NeverScrollableScrollPhysics(),
           headerSliverBuilder: (context, isScolled) {
@@ -114,7 +114,8 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ];
           },
-          body: Expanded(
+          body: Container(
+            height: 800,
             child: WatchlistScreen(),
           ),
         ),

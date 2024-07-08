@@ -1,79 +1,217 @@
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'dart:async';
+import 'package:web_socket_channel/io.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:prayas_capital/core/utils/ColorFile.dart';
-import 'package:prayas_capital/presentation/buy_screen/buy_screen.dart';
 import 'package:prayas_capital/presentation/orders_screen/place_order_screen.dart';
-import 'package:prayas_capital/widgets/App.dart';
-
-import '../watchlist_screen/widgets/stockinfo_item_widget.dart';
-import 'package:flutter/material.dart';
-import 'package:prayas_capital/core/app_export.dart';
-import 'package:prayas_capital/widgets/app_bar/appbar_title.dart';
-import 'package:prayas_capital/widgets/app_bar/custom_app_bar.dart';
-import 'package:prayas_capital/widgets/custom_search_view.dart';
-
 import 'widgets/WatchListListViewWidget.dart';
 
-class WatchlistScreen extends StatelessWidget {
-  WatchlistScreen({Key? key})
-      : super(
-          key: key,
-        );
+class WatchlistScreen extends StatefulWidget {
+  WatchlistScreen({Key? key}) : super(key: key);
 
+  @override
+  State<WatchlistScreen> createState() => _WatchlistScreenState();
+}
+
+class _WatchlistScreenState extends State<WatchlistScreen> {
   TextEditingController searchController = TextEditingController();
+  late Future<List<WatchListListViewWidget>> futureWatchListItems;
+  final WebSocketChannel channel =
+  IOWebSocketChannel.connect('ws://prayascapital.com:4000');
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    futureWatchListItems = fetchWatchListItems();
+  }
+
+  Future<List<WatchListListViewWidget>> fetchWatchListItems() async {
+    try {
+      final response = await http.get(Uri.parse('http://epistlebe.tech:5000/latest'));
+
+      if (response.statusCode == 200) {
+        List jsonResponse = json.decode(response.body);
+
+        return jsonResponse
+            .map<WatchListListViewWidget>((item) => WatchListListViewWidget.fromJson(item))
+            .toList();
+      } else {
+        throw Exception('Failed to load watchlist');
+      }
+    } catch (e) {
+      throw Exception('Failed to load watchlist: $e');
+    }
+  }
+
+  Future<void> _refreshWatchList() async {
+    setState(() {
+      futureWatchListItems = fetchWatchListItems();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
-      resizeToAvoidBottomInset: false,
-      body: SingleChildScrollView(
-        child: SizedBox(
-          width: double.infinity,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              ListView.builder(
-                itemCount: 15,
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                itemBuilder: (context, index) {
-                  return InkWell(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          PageTransition(
-                              type: PageTransitionType.bottomToTop,
-                              child: PlaceOrderScreen()));
-
-                    },
-                    child: Column(
-                      children: [
-                        Container(
-                          height: 0.5,
-                          width: double.infinity,
-                          color: Theme.of(context).colorScheme.onSecondary,
-                        ),
-                        WatchListListViewWidget(
-                          titleName: 'NIFTY 17500 CE',
-                          subTitleName: '16-Nov NFO',
-                          price: '2044.65',
-                          percentage: '-469.10(-18.86%)',
-                        ),
-                      ],
-                    ),
-                  );
-                },
+      resizeToAvoidBottomInset: true,
+      body: SizedBox(
+        width: double.infinity,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              height: 70,
+              child: Text(
+                'Live data of your watchlist',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-              Container(
-                height: 0.5,
-                width: double.infinity,
-                color: Theme.of(context).colorScheme.onSecondary,
+            ),
+            Expanded(
+              child: RefreshIndicator(
+                onRefresh: _refreshWatchList,
+                child: FutureBuilder<List<WatchListListViewWidget>>(
+                  future: futureWatchListItems,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(child: CircularProgressIndicator());
+                    } else if (snapshot.hasError) {
+                      return Center(child: Text('Error: ${snapshot.error}'));
+                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return Center(child: Text('No data found'));
+                    } else {
+                      return ListView.separated(
+                        itemCount: snapshot.data!.length,
+                        separatorBuilder: (context, index) => Divider(),
+                        itemBuilder: (context, index) {
+                          var item = snapshot.data![index];
+                          return InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                PageTransition(
+                                  type: PageTransitionType.bottomToTop,
+                                  child: PlaceOrderScreen(),
+                                ),
+                              );
+                            },
+                            child: Column(
+                              children: [
+                                Container(
+                                  height: 0.5,
+                                  width: double.infinity,
+                                  color: Theme.of(context).colorScheme.onSecondary,
+                                ),
+                                item,
+                              ],
+                            ),
+                          );
+                        },
+                      );
+                    }
+                  },
+                ),
               ),
-            ],
-          ),
+            ),
+            Container(
+              height: 0.5,
+              width: double.infinity,
+              color: Theme.of(context).colorScheme.onSecondary,
+            ),
+          ],
         ),
       ),
     );
   }
+}
 
+class WatchListListViewWidget extends StatelessWidget {
+  final String titleName;
+  final String subTitleName;
+  final String price;
+  final String percentage;
+  final String high;
+  final String low;
+  final String exchange;
+  final String lastTradeTime;
+
+  WatchListListViewWidget({
+    required this.titleName,
+    required this.subTitleName,
+    required this.price,
+    required this.percentage,
+    required this.high,
+    required this.low,
+    required this.exchange,
+    required this.lastTradeTime,
+  });
+
+  factory WatchListListViewWidget.fromJson(Map<String, dynamic> json) {
+    return WatchListListViewWidget(
+      titleName: json['UniqueName'].toString(),
+      subTitleName: json['Symbol'].toString(),
+      price: json['Open'].toString(),
+      percentage: json['BBP'].toString(),
+      high: json['High'].toString(),
+      low: json['Low'].toString(),
+      exchange: json['Exchange'].toString(),
+      lastTradeTime: json['LastTradedTime'].toString(),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      title: Text(titleName),
+      subtitle: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(subTitleName),
+          Container(
+            margin: EdgeInsets.only(top: 8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Container(
+                  padding: EdgeInsets.symmetric(vertical: 2.0, horizontal: 6.0),
+                  decoration: BoxDecoration(
+                    color: Colors.green,
+                    borderRadius: BorderRadius.circular(30.0),
+                  ),
+                  child: Text(
+                    'Low: $low',
+                    style: TextStyle(color: Colors.white, fontSize: 12.0),
+                  ),
+                ),
+                SizedBox(width: 16),
+                Container(
+                  padding: EdgeInsets.symmetric(vertical: 2.0, horizontal: 6.0),
+                  decoration: BoxDecoration(
+                    color: Colors.red,
+                    borderRadius: BorderRadius.circular(30.0),
+                  ),
+                  child: Text(
+                    'High: $high',
+                    style: TextStyle(color: Colors.white, fontSize: 12.0),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+      trailing: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Text(exchange),
+          Text(lastTradeTime),
+        ],
+      ),
+    );
+  }
 }

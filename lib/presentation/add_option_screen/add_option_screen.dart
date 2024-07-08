@@ -71,7 +71,7 @@ class _AddOptionScreenState extends State<AddOptionScreen> {
           margin: EdgeInsets.only(right: 10.h, left: 10.h),
           child: Column(
             children: [
-              //niftyAndBankNiftyWidget(),
+              // niftyAndBankNiftyWidget(),
               SizedBoxView(
                 height: 30.v,
               ),
