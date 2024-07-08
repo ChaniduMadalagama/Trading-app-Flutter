@@ -335,7 +335,7 @@ class NiftyData {
 
 // Function to fetch data from API
 Future<NiftyData> fetchNiftyData(String type) async {
-  final response = await http.get(Uri.parse('http://epistlebe.tech:5000/topbar/$type'));
+  final response = await http.get(Uri.parse('http://prayascapital.com:5000/realtime/topbar/$type'));
 
   if (response.statusCode == 200) {
     return NiftyData.fromJson(jsonDecode(response.body));

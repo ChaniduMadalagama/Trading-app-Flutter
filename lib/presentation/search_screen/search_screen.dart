@@ -37,7 +37,7 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   Future<List<SearchListListViewWidget>> fetchWatchListItems() async {
-    final response = await http.get(Uri.parse('http://epistlebe.tech:5000/tickers'));
+    final response = await http.get(Uri.parse('http://prayascapital.com:5000/watchlist/tickers'));
 
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body);
@@ -59,7 +59,11 @@ class _SearchScreenState extends State<SearchScreen> {
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
-      body: jsonEncode(item),
+      body: jsonEncode({
+        'unique_name': item['UniqueName'],
+        'name': item['originName'],
+        'user_id': 1
+      }),
     );
 
     if (response.statusCode == 200) {

@@ -506,11 +506,11 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
 
     if (response.statusCode == 200) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Item added successfully!'),
+        content: Text('Order Saved Successfully'),
       ));
     } else {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Failed to add item.'),
+        content: Text(response.body),
       ));
     }
   }
@@ -519,8 +519,8 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
     final String lots = lotsTextEditingController.text;
     final String price = enterPriceTextEditingController.text;
     final Map<String, dynamic> item = {
-      'lots': lots,
-      'price': price,
+      'lots': 50,
+      'price': '2.30',
       'unique_name': 'NIFTY_50',
       'nature': 1,
       'type': 'Market',

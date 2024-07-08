@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
+import 'dart:io';
 import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:prayas_capital/core/utils/ColorFile.dart';
 import 'package:prayas_capital/presentation/orders_screen/place_order_screen.dart';
 import 'widgets/WatchListListViewWidget.dart';
+import 'dart:developer';
 
 class WatchlistScreen extends StatefulWidget {
   WatchlistScreen({Key? key}) : super(key: key);
@@ -23,18 +25,29 @@ class _WatchlistScreenState extends State<WatchlistScreen> {
   IOWebSocketChannel.connect('ws://prayascapital.com:4000');
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
+  void initState() {
+    super.initState();
     futureWatchListItems = fetchWatchListItems();
+  }
+
+  @override
+  void dispose() {
+    channel.sink.close();
+    super.dispose();
   }
 
   Future<List<WatchListListViewWidget>> fetchWatchListItems() async {
     try {
-      final response = await http.get(Uri.parse('http://epistlebe.tech:5000/latest'));
+      final response = await http.post(
+        Uri.parse('http://prayascapital.com:5000/watchlist/latest'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode({'user_id': 1}),
+      );
 
       if (response.statusCode == 200) {
         List jsonResponse = json.decode(response.body);
-
         return jsonResponse
             .map<WatchListListViewWidget>((item) => WatchListListViewWidget.fromJson(item))
             .toList();
