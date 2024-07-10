@@ -136,7 +136,16 @@ class AppRoutes {
     oiVsTimeChartScreen: (context) => OiVsTimeChartScreen(),
     monthSummaryScreen: (context) => MonthSummaryScreen(),
     positionHistory: (context) => PositionHistory(),
-    placeOrderScreen: (context) => PlaceOrderScreen(),
+    placeOrderScreen: (context) => PlaceOrderScreen(
+      titleName: '',
+      subTitleName: '',
+      high: '',
+      low: '',
+      percentage: '',
+      price: '',
+      exchange: '',
+      lastTradeTime: '',
+    ),
     dayWishDataWidget: (context) => DayWishDataWidget(),
   };
 }

@@ -11,12 +11,31 @@ import 'package:prayas_capital/core/utils/ColorFile.dart';
 import '../../widgets/App.dart';
 import '../../widgets/TextView.dart';
 import '../appBar_Widget/appBar_widget.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class PositionScreen extends StatelessWidget {
   const PositionScreen({Key? key})
       : super(
-          key: key,
-        );
+    key: key,
+  );
+
+  Future<List<Map<String, dynamic>>> fetchData() async {
+    final response = await http.post(Uri.parse('http://prayascapital.com:5000/orders/latest'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode({
+        'user_id': 1
+      }),);
+
+    if (response.statusCode == 200) {
+      List data = json.decode(response.body);
+      return data.map((item) => item as Map<String, dynamic>).toList();
+    } else {
+      throw Exception('Failed to load data');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +69,7 @@ class PositionScreen extends StatelessWidget {
                             alignment: Alignment.center,
                             width: MediaQuery.of(context).size.width / 1.3,
                             decoration:
-                                AppDecoration.fillOnPrimaryContainer.copyWith(
+                            AppDecoration.fillOnPrimaryContainer.copyWith(
                               borderRadius: BorderRadiusStyle.roundedBorder7,
                               border: Border.all(color: AppColors.white),
                               color: Theme.of(context).colorScheme.secondary,
@@ -82,30 +101,42 @@ class PositionScreen extends StatelessWidget {
                   ],
                 ),
               ),
-              //SizedBox(height: 24.v),
-              // SizedBox(height: 30),
-              ListView.builder(
-                itemCount: 5,
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                itemBuilder: (context, index) {
-                  return Column(
-                    children: [
-                      Container(
-                        height: 0.5,
-                        width: double.infinity,
-                        color: Theme.of(context).colorScheme.onSecondary,
-                      ),
-                      PositionScreenListViewWidget(
-                        titleName: 'NIFTY 17500 CE',
-                        subTitleName: '16-Nov NFO',
-                        price: '2044.65',
-                        lpt: '2044.65',
-                        ipoOpenClose: 'Open',
-                        date: 'Avg. 100.78',
-                      ),
-                    ],
-                  );
+              FutureBuilder<List<Map<String, dynamic>>>(
+                future: fetchData(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return CircularProgressIndicator();
+                  } else if (snapshot.hasError) {
+                    return Text('Error: ${snapshot.error}');
+                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    return Text('No data available');
+                  } else {
+                    return ListView.builder(
+                      itemCount: snapshot.data!.length,
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemBuilder: (context, index) {
+                        var item = snapshot.data![index];
+                        return Column(
+                          children: [
+                            Container(
+                              height: 0.5,
+                              width: double.infinity,
+                              color: Theme.of(context).colorScheme.onSecondary,
+                            ),
+                            PositionScreenListViewWidget(
+                              titleName: item['unique_name'],
+                              subTitleName: item['unique_name'],
+                              price: item['price'],
+                              lpt: 'N/A',
+                              ipoOpenClose: item['open'] == 1 ? 'Open' : 'Close',
+                              date: item['created_at'],
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  }
                 },
               ),
             ],

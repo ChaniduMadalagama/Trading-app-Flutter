@@ -109,7 +109,16 @@ class _WatchlistScreenState extends State<WatchlistScreen> {
                                 context,
                                 PageTransition(
                                   type: PageTransitionType.bottomToTop,
-                                  child: PlaceOrderScreen(),
+                                  child: PlaceOrderScreen(
+                                    titleName: item.titleName,
+                                    subTitleName: item.subTitleName,
+                                    high: item.high,
+                                    low: item.low,
+                                    percentage: item.percentage,
+                                    price: item.price,
+                                    exchange: item.exchange,
+                                    lastTradeTime: item.lastTradeTime,
+                                  ),
                                 ),
                               );
                             },
@@ -180,11 +189,10 @@ class WatchListListViewWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      title: Text(titleName),
+      title: Text(titleName, style:TextStyle(fontSize: 12)),
       subtitle: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(subTitleName),
           Container(
             margin: EdgeInsets.only(top: 8.0),
             child: Row(

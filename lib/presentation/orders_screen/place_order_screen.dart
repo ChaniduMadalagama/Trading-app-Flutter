@@ -471,10 +471,31 @@ import 'package:prayas_capital/core/utils/ColorFile.dart';
 import 'package:prayas_capital/core/utils/StringFile.dart';
 import 'package:prayas_capital/widgets/App.dart';
 import 'package:prayas_capital/widgets/TextView.dart';
+import 'package:prayas_capital/presentation/watchlist_screen/watchlist_screen.dart';
 import 'package:prayas_capital/widgets/custom_outlined_button.dart';
 import 'package:prayas_capital/widgets/custom_text_form_field.dart';
 
 class PlaceOrderScreen extends StatefulWidget {
+  final String titleName;
+  final String subTitleName;
+  final String price;
+  final String percentage;
+  final String high;
+  final String low;
+  final String exchange;
+  final String lastTradeTime;
+
+  PlaceOrderScreen({
+    required this.titleName,
+    required this.subTitleName,
+    required this.price,
+    required this.percentage,
+    required this.high,
+    required this.low,
+    required this.exchange,
+    required this.lastTradeTime,
+  });
+
   @override
   State<PlaceOrderScreen> createState() => _PlaceOrderScreenState();
 }
@@ -515,18 +536,19 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
     }
   }
 
-  void submitOrder() {
+  void submitOrder(String order) {
     final String lots = lotsTextEditingController.text;
     final String price = enterPriceTextEditingController.text;
     final Map<String, dynamic> item = {
       'lots': 50,
-      'price': '2.30',
-      'unique_name': 'NIFTY_50',
+      'price': widget.price,
+      'unique_name': widget.titleName,
       'nature': 1,
       'type': 'Market',
       'quantity': 2,
       'user_id': 1,
-      'ip_address': '192.168.667.332'
+      'ip_address': '192.168.667.332',
+      'order_method': order,
     };
 
     handleAddButton(item);
@@ -803,7 +825,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                                 children: [
                                   InkWell(
                                     onTap: () {
-                                      submitOrder();
+                                      submitOrder('buy');
                                     },
                                     child: ElevatedButton(
                                       child: Text("BUY"),
@@ -813,23 +835,24 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                                         elevation: 0,
                                       ),
                                       onPressed: () {
-                                        submitOrder();
+                                        submitOrder('buy');
                                       },
                                     ),
                                   ),
                                   InkWell(
-                                    onTap: () {},
-                                    child: Container(
-                                      height: 50,
-                                      alignment: Alignment.center,
-                                      width: MediaQuery.of(context).size.width / 2.8,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(5),
-                                        border: Border.all(
-                                            color: Colors.red
-                                        ),
+                                    onTap: () {
+                                      submitOrder('sell');
+                                    },
+                                    child: ElevatedButton(
+                                      child: Text("SELL"),
+                                      style: ElevatedButton.styleFrom(
+                                        foregroundColor: Colors.white,
+                                        backgroundColor: Colors.green,
+                                        elevation: 0,
                                       ),
-                                      child: Text("SELL", style: TextStyle(fontSize: 24, color: Colors.red)),
+                                      onPressed: () {
+                                        submitOrder('sell');
+                                      },
                                     ),
                                   ),
                                 ],
