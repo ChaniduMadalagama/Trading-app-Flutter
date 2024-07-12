@@ -436,7 +436,7 @@ class _NiftyAndBankNiftyWidgetState extends State<NiftyAndBankNiftyWidget> {
             SizedBox(height: 5),
             if (data != null)
               Text(
-                "${data.cp.toString()} (${data.precentageMark}${data.percentage})",
+                "${data.cp.toString()} (${data.precentageMark}${data.change})",
                 style: TextStyle(
                   color: data.precentageMark == "-"
                       ? AppColors.red
