@@ -50,20 +50,20 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyDLjt_kNQ9MnhpQ5LVxmmoP3NC95hFm9YI',
-    appId: '1:213842991893:android:952fc876a1d989eccfe71c',
-    messagingSenderId: '213842991893',
-    projectId: 'prayascapital-2aff3',
-    storageBucket: 'prayascapital-2aff3.appspot.com',
+    apiKey: 'AIzaSyCCboGy99-5tZ8HLwbAUENBPNer3Sfpc10',
+    appId: '1:195015543291:android:27075b16b889195052235e',
+    messagingSenderId: '195015543291',
+    projectId: 'prayas-capital',
+    storageBucket: 'prayas-capital.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyAq-gqBiNlMnJ4BUK1RHWBQwLLwkr3V8LE',
-    appId: '1:213842991893:ios:118b9d007348b0f9cfe71c',
-    messagingSenderId: '213842991893',
-    projectId: 'prayascapital-2aff3',
-    storageBucket: 'prayascapital-2aff3.appspot.com',
-    iosClientId: '213842991893-8upk9psn094al4p2lom757k45gbh2taa.apps.googleusercontent.com',
+    apiKey: 'AIzaSyBThBvgyblf5k84MZnGfVDZariUoiI2-KQ',
+    appId: '1:195015543291:ios:def856695305544452235e',
+    messagingSenderId: '195015543291',
+    projectId: 'prayas-capital',
+    storageBucket: 'prayas-capital.appspot.com',
     iosBundleId: 'com.prayascapital.app',
   );
+
 }

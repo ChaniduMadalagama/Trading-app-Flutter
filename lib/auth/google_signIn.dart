@@ -27,20 +27,19 @@ import 'package:prayas_capital/Controller/app_theme/ThemeModel.dart';
 //   }
 // }
 
-
 class Authentication {
- static FirebaseAuth auth = FirebaseAuth.instance;
- static User? user;
-  static Future<User?> signInWithGoogle(ThemeModel loginProvider,BuildContext context) async {
-
+  static FirebaseAuth auth = FirebaseAuth.instance;
+  static User? user;
+  static Future<User?> signInWithGoogle(
+      ThemeModel loginProvider, BuildContext context) async {
     final GoogleSignIn googleSignIn = GoogleSignIn();
 
     final GoogleSignInAccount? googleSignInAccount =
-    await googleSignIn.signIn();
+        await googleSignIn.signIn();
 
     if (googleSignInAccount != null) {
       final GoogleSignInAuthentication googleSignInAuthentication =
-      await googleSignInAccount.authentication;
+          await googleSignInAccount.authentication;
 
       final AuthCredential credential = GoogleAuthProvider.credential(
         accessToken: googleSignInAuthentication.accessToken,
@@ -48,13 +47,17 @@ class Authentication {
       );
 
       //try {
-        final UserCredential userCredential =
-        await auth.signInWithCredential(credential);
-        user = userCredential.user;
-        loginProvider.loginUser(userEmail: user!.email.toString(),name: user!.displayName, id: "", token: googleSignInAuthentication.accessToken,context: context);
+      final UserCredential userCredential =
+          await auth.signInWithCredential(credential);
+      user = userCredential.user;
+      loginProvider.loginUser(
+          userEmail: user!.email.toString(),
+          name: user!.displayName,
+          id: "",
+          token: googleSignInAuthentication.accessToken,
+          context: context);
 
-
-     /* } on FirebaseAuthException catch (e) {
+      /* } on FirebaseAuthException catch (e) {
         if (e.code == 'account-exists-with-different-credential') {
           // handle the error here
         }
