@@ -75,16 +75,6 @@ class _WatchlistScreenState extends State<WatchlistScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              height: 70,
-              child: Text(
-                'Live data of your watchlist',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
             Expanded(
               child: RefreshIndicator(
                 onRefresh: _refreshWatchList,
@@ -175,9 +165,9 @@ class WatchListListViewWidget extends StatelessWidget {
 
   factory WatchListListViewWidget.fromJson(Map<String, dynamic> json) {
     return WatchListListViewWidget(
-      titleName: json['UniqueName'].toString(),
+      titleName: json['DisplayName'].toString(),
       subTitleName: json['Symbol'].toString(),
-      price: json['Open'].toString(),
+      price: json['LTP'].toString(),
       percentage: json['BBP'].toString(),
       high: json['High'].toString(),
       low: json['Low'].toString(),
@@ -189,37 +179,35 @@ class WatchListListViewWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      title: Text(titleName, style:TextStyle(fontSize: 12)),
+      title: Text(
+        titleName,
+        style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
+      ),
       subtitle: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
             margin: EdgeInsets.only(top: 8.0),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Container(
-                  padding: EdgeInsets.symmetric(vertical: 2.0, horizontal: 6.0),
+                  padding: EdgeInsets.fromLTRB(4, 2, 4, 2), // Adjust the padding value as needed
                   decoration: BoxDecoration(
-                    color: Colors.green,
-                    borderRadius: BorderRadius.circular(30.0),
+                    color: Colors.redAccent,
+                    borderRadius: BorderRadius.circular(5.0), // Optional: Adds rounded corners
                   ),
                   child: Text(
-                    'Low: $low',
-                    style: TextStyle(color: Colors.white, fontSize: 12.0),
+                    '$price',
+                    style: TextStyle(
+                      fontSize: 13.0,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
-                SizedBox(width: 16),
                 Container(
-                  padding: EdgeInsets.symmetric(vertical: 2.0, horizontal: 6.0),
-                  decoration: BoxDecoration(
-                    color: Colors.red,
-                    borderRadius: BorderRadius.circular(30.0),
-                  ),
-                  child: Text(
-                    'High: $high',
-                    style: TextStyle(color: Colors.white, fontSize: 12.0),
-                  ),
+                  margin: EdgeInsets.only(left: 16.0), // Add left margin here
+                  child: Text('$lastTradeTime (LTT)', style: TextStyle(fontSize: 12),),
                 ),
               ],
             ),
@@ -229,8 +217,7 @@ class WatchListListViewWidget extends StatelessWidget {
       trailing: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          Text(exchange),
-          Text(lastTradeTime),
+          Text(subTitleName),
         ],
       ),
     );

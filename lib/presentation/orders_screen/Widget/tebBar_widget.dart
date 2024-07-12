@@ -18,15 +18,18 @@ class _TabBarWidgwtOrderScreenState extends State<TabBarWidgwtOrderScreen>
   Future<List<Order>> fetchOrders() async {
     final response = await http.post(Uri.parse('http://prayascapital.com:5000/orders/latest'),
       headers: <String, String>{
-      'Content-Type': 'application/json; charset=UTF-8',
-    },
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
       body: jsonEncode({
         'user_id': 1
       }),);
 
     if (response.statusCode == 200) {
-      List<dynamic> json = jsonDecode(response.body);
-      return json.map((e) => Order.fromJson(e)).toList();
+      Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+      List<dynamic> jsonOrders = jsonResponse['userOrders'];
+
+      List<Order> orders = jsonOrders.map((e) => Order.fromJson(e)).toList();
+      return orders;
     } else {
       throw Exception('Failed to load orders');
     }
@@ -110,7 +113,7 @@ class _TabBarWidgwtOrderScreenState extends State<TabBarWidgwtOrderScreen>
                                         order.status == 1 ? 'Executed' : 'Pending',
                                         style: TextStyle(color: AppColors.green),
                                       ),
-                                      SizedBox(width: 8),
+                                      Spacer(),
                                       Padding(
                                         padding: EdgeInsets.only(left: 16),
                                         child: Text(
@@ -120,36 +123,37 @@ class _TabBarWidgwtOrderScreenState extends State<TabBarWidgwtOrderScreen>
                                       ),
                                     ],
                                   ),
-                                  // Additional content row within the ListTile
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
                                       Container(
                                         margin: EdgeInsets.only(top: 10),
-                                        padding: EdgeInsets.fromLTRB(6, 3, 6, 3), // Adjust padding as needed
+                                        padding: EdgeInsets.fromLTRB(6, 3, 6, 3),
                                         decoration: BoxDecoration(
                                           color: Colors.green,
-                                          borderRadius: BorderRadius.circular(4), // Optional: adds rounded corners
+                                          borderRadius: BorderRadius.circular(4),
                                         ),
                                         child: Text(
                                           order.type,
                                           style: TextStyle(color: Colors.white),
                                         ),
                                       ),
-                                      Padding(padding: EdgeInsets.only(left: 16),
-                                      child: Container(
-                                        margin: EdgeInsets.only(top: 10),
-                                        padding: EdgeInsets.fromLTRB(6, 3, 6, 3), // Adjust padding as needed
-                                        decoration: BoxDecoration(
-                                          color: Colors.blueGrey,
-                                          borderRadius: BorderRadius.circular(4), // Optional: adds rounded corners
+                                      Spacer(),
+                                      Padding(
+                                        padding: EdgeInsets.only(left: 16),
+                                        child: Container(
+                                          margin: EdgeInsets.only(top: 10),
+                                          padding: EdgeInsets.fromLTRB(6, 3, 6, 3),
+                                          decoration: BoxDecoration(
+                                            color: order.order == 'buy' ? Colors.blueGrey : Colors.red,
+                                            borderRadius: BorderRadius.circular(4),
+                                          ),
+                                          child: Text(
+                                            order.order.toUpperCase(),
+                                            style: TextStyle(color: Colors.white),
+                                          ),
                                         ),
-                                        child: Text(
-                                          order.order.toUpperCase(),
-                                          style: TextStyle(color: Colors.white),
-                                        ),
-                                      ),)
-
+                                      )
                                     ],
                                   ),
                                 ],
@@ -201,15 +205,15 @@ class Order {
 
   factory Order.fromJson(Map<String, dynamic> json) {
     return Order(
-      id: json['id'],
-      name: json['unique_name'],
-      status: json['status'],
-      order: json['order_method'],
-      price: json['price'],
-      quantity: json['quantity'],
-      type: json['type'],
-      lots: json['lots'],
-      createdAt: json['created_at']
+        id: json['id'],
+        name: json['name'],
+        status: json['status'],
+        order: json['order_method'],
+        price: json['price'],
+        quantity: json['quantity'],
+        type: json['type'],
+        lots: json['lots'],
+        createdAt: json['created_at']
     );
   }
 }

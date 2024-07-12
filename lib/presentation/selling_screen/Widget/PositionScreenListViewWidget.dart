@@ -12,6 +12,7 @@ class PositionScreenListViewWidget extends StatelessWidget {
   String date;
   String price;
   String lpt;
+  int qty;
   String ipoOpenClose;
 
   PositionScreenListViewWidget({
@@ -20,6 +21,7 @@ class PositionScreenListViewWidget extends StatelessWidget {
     required this.date,
     required this.price,
     required this.lpt,
+    required this.qty,
     required this.ipoOpenClose,
   });
 
@@ -57,7 +59,7 @@ class PositionScreenListViewWidget extends StatelessWidget {
                         color: Theme.of(context).colorScheme.secondary,
                       ),
                       child: Text(
-                        "50 ${MyString.qty}",
+                        "${qty} ${MyString.qty}",
                         style: TextStyle(
                             color: AppColors.green,
                             fontWeight: FontWeight.w600,

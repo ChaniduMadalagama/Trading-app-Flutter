@@ -92,9 +92,9 @@ class StartScreen extends StatelessWidget {
                 borderRadius: BorderRadius.circular(30),
                 onTap: () {
                //   print("userEmail >>>> $userEmail");
-                  loginProvider.loginUser(userEmail: "gest@gmail.com",name: "", id: "", token: "", context: context);
-           /*       Navigator.pushNamed(context,
-                      AppRoutes.bottomNavigationBarScreenRoutesaaaaaaaa);*/
+               //    loginProvider.loginUser(userEmail: "gest@gmail.com",name: "", id: "", token: "", context: context);
+                 Navigator.pushNamed(context,
+                      AppRoutes.bottomNavigationBarScreenRoutesaaaaaaaa);
                   //   value.toggleMode();
                 },
                 child: Container(

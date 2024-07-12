@@ -51,7 +51,7 @@ dialogBoxFun({
   required String hp,
   required String lp,
   required int lastDayCp,
-  required int lastCp,
+  required String lastCp,
   required String type,
   required String precentageMark,
   required context,
@@ -138,12 +138,7 @@ dialogBoxFun({
                                 ),
                                 TextView(
                                   text:
-                                  "${lastDayCp > 0 ? "+" : ""}${lastDayCp == null ? "00" : lastDayCp.toStringAsFixed(2)}",
-                                  textColor: cp == null
-                                      ? Colors.grey
-                                      : lastDayCp < 0
-                                      ? AppColors.red
-                                      : AppColors.green,
+                                  "${change}",
                                   textSize: 16.h,
                                   fontWeight: FontWeight.w400,
                                 ),
@@ -305,8 +300,9 @@ class NiftyData {
   final String op;
   final String hp;
   final String lp;
-  final int lastCp;
+  final String lastCp;
   final String precentageMark;
+  final String change;
 
   NiftyData({
     required this.cp,
@@ -317,6 +313,7 @@ class NiftyData {
     required this.lp,
     required this.lastCp,
     required this.precentageMark,
+    required this.change
   });
 
   factory NiftyData.fromJson(Map<String, dynamic> json) {
@@ -329,6 +326,7 @@ class NiftyData {
       lp: json['lp'],
       lastCp: json['lastCp'],
       precentageMark: json['percentageMark'],
+      change: json['change']
     );
   }
 }
@@ -360,7 +358,7 @@ class _NiftyAndBankNiftyWidgetState extends State<NiftyAndBankNiftyWidget> {
   void initState() {
     super.initState();
     _fetchData();
-    _timer = Timer.periodic(Duration(seconds: 5), (timer) {
+    _timer = Timer.periodic(Duration(seconds: 3), (timer) {
       _fetchData();
     });
   }
@@ -404,7 +402,7 @@ class _NiftyAndBankNiftyWidgetState extends State<NiftyAndBankNiftyWidget> {
         if (data != null) {
           dialogBoxFun(
             cp: data.cp.toString(),
-            change: data.lastDayCp.toString(),
+            change: data.change,
             percentage: data.percentage.toString(),
             op: data.op.toString(),
             hp: data.hp.toString(),

@@ -132,6 +132,7 @@ class SellingScreen extends StatelessWidget {
                           subTitleName: '16-Nov NFO',
                           price: '2044.65',
                           lpt:'2044.65',
+                          qty: 50,
                           ipoOpenClose: 'Open',
                           date: 'Avg. 100.78',
                         ),

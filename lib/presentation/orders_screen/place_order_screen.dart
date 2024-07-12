@@ -847,7 +847,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                                       child: Text("SELL"),
                                       style: ElevatedButton.styleFrom(
                                         foregroundColor: Colors.white,
-                                        backgroundColor: Colors.green,
+                                        backgroundColor: Colors.red,
                                         elevation: 0,
                                       ),
                                       onPressed: () {
