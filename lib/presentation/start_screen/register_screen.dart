@@ -49,7 +49,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
       if (response.statusCode == 200) {
         // Registration successful, navigate to the next screen or handle success
-        if (responseData['logged_in'] == true) {
+        if (responseData['register'] == true) {
           Navigator.pushNamed(
               context, AppRoutes.bottomNavigationBarScreenRoutesaaaaaaaa);
         } else {
