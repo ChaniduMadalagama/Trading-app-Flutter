@@ -6,7 +6,8 @@ import 'package:prayas_capital/presentation/selling_screen/Widget/PositionScreen
 import 'package:prayas_capital/widgets/app_bar/appbar_title.dart';
 import 'package:prayas_capital/widgets/app_bar/custom_app_bar.dart';
 import 'package:prayas_capital/widgets/custom_outlined_button.dart';
-
+import 'package:provider/provider.dart';
+import 'package:prayas_capital/auth/UserProvider.dart';
 import 'package:prayas_capital/core/utils/ColorFile.dart';
 import '../../widgets/App.dart';
 import '../../widgets/TextView.dart';
@@ -30,13 +31,28 @@ class PositionScreen extends StatefulWidget {
 }
 
 class _PositionScreenState extends State<PositionScreen> {
-  Future<ResponseData> fetchData() async {
+  late Future<ResponseData> _futureData;
+
+  @override
+  void initState() {
+    super.initState();
+    _futureData = fetchData(context);
+  }
+
+  Future<ResponseData> fetchData(BuildContext context) async {
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    final userId = userProvider.user?.user_id; // Assuming the UserModel has an id property
+
+    if (userId == null) {
+      throw Exception('User ID is null');
+    }
+
     final response = await http.post(
       Uri.parse('http://prayascapital.com:5000/orders/latest'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
-      body: jsonEncode({'user_id': 1}),
+      body: jsonEncode({'user_id': userId}),
     );
 
     if (response.statusCode == 200) {
@@ -64,17 +80,9 @@ class _PositionScreenState extends State<PositionScreen> {
     }
   }
 
-  late Future<ResponseData> _futureData;
-
-  @override
-  void initState() {
-    super.initState();
-    _futureData = fetchData();
-  }
-
   Future<void> _refreshData() async {
     setState(() {
-      _futureData = fetchData();
+      _futureData = fetchData(context);
     });
   }
 
@@ -124,18 +132,11 @@ class _PositionScreenState extends State<PositionScreen> {
                                     child: InkWell(
                                       child: Container(
                                         alignment: Alignment.center,
-                                        width: MediaQuery.of(context).size.width /
-                                            1.3,
-                                        decoration: AppDecoration
-                                            .fillOnPrimaryContainer
-                                            .copyWith(
-                                          borderRadius:
-                                          BorderRadiusStyle.roundedBorder7,
-                                          border: Border.all(
-                                              color: AppColors.white),
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .secondary,
+                                        width: MediaQuery.of(context).size.width / 1.3,
+                                        decoration: AppDecoration.fillOnPrimaryContainer.copyWith(
+                                          borderRadius: BorderRadiusStyle.roundedBorder7,
+                                          border: Border.all(color: AppColors.white),
+                                          color: Theme.of(context).colorScheme.secondary,
                                         ),
                                         child: Column(
                                           mainAxisSize: MainAxisSize.min,
@@ -148,14 +149,10 @@ class _PositionScreenState extends State<PositionScreen> {
                                             Align(
                                               alignment: Alignment.center,
                                               child: Padding(
-                                                padding: EdgeInsets.only(
-                                                    right: 2.h),
+                                                padding: EdgeInsets.only(right: 2.h),
                                                 child: Text(
-                                                  responseData.summary[
-                                                  'total_lp']
-                                                      .toString(),
-                                                  style: CustomTextStyles
-                                                      .bodyMediumRedA700,
+                                                  responseData.summary['total_lp'].toString(),
+                                                  style: CustomTextStyles.bodyMediumRedA700,
                                                 ),
                                               ),
                                             ),
@@ -179,9 +176,7 @@ class _PositionScreenState extends State<PositionScreen> {
                                   Container(
                                     height: 0.5,
                                     width: double.infinity,
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onSecondary,
+                                    color: Theme.of(context).colorScheme.onSecondary,
                                   ),
                                   PositionScreenListViewWidget(
                                     id: item['id'],
@@ -190,9 +185,7 @@ class _PositionScreenState extends State<PositionScreen> {
                                     price: item['price'],
                                     lpt: item['price'],
                                     qty: item['quantity'],
-                                    ipoOpenClose: item['open'] == 1
-                                        ? 'Open'
-                                        : 'Close',
+                                    ipoOpenClose: item['open'] == 1 ? 'Open' : 'Close',
                                     date: item['created_at'],
                                   ),
                                 ],

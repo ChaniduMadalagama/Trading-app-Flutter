@@ -115,7 +115,7 @@ class _AccountScreenState extends State<AccountScreen> {
                         name: 'Basket Orders',
                         imageType: 'svg',
                         onTap: () {
-                          Navigator.pushNamed(context, AppRoutes.basketOrdersScreen);
+                          Navigator.pushNamed(context, AppRoutes.basketOrdersOneScreen);
                         },
                       ),
                       SizedBox(height: 10.v),

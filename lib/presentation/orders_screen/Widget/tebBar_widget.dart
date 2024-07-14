@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:prayas_capital/core/utils/ColorFile.dart';
 import 'package:prayas_capital/core/utils/StringFile.dart';
+import 'package:provider/provider.dart';
+import 'package:prayas_capital/auth/UserProvider.dart';
 
 class TabBarWidgwtOrderScreen extends StatefulWidget {
   const TabBarWidgwtOrderScreen({key});
@@ -15,13 +17,13 @@ class TabBarWidgwtOrderScreen extends StatefulWidget {
 class _TabBarWidgwtOrderScreenState extends State<TabBarWidgwtOrderScreen>
     with SingleTickerProviderStateMixin {
 
-  Future<List<Order>> fetchOrders() async {
+  Future<List<Order>> fetchOrders(userId) async {
     final response = await http.post(Uri.parse('http://prayascapital.com:5000/orders/latest'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode({
-        'user_id': 1
+        'user_id': userId
       }),);
 
     if (response.statusCode == 200) {
@@ -37,6 +39,8 @@ class _TabBarWidgwtOrderScreenState extends State<TabBarWidgwtOrderScreen>
 
   @override
   Widget build(BuildContext context) {
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    final userId = userProvider.user?.user_id;
     return DefaultTabController(
       initialIndex: 1,
       length: 3,
@@ -88,7 +92,7 @@ class _TabBarWidgwtOrderScreenState extends State<TabBarWidgwtOrderScreen>
                 ),
                 Center(
                   child: FutureBuilder<List<Order>>(
-                    future: fetchOrders(),
+                    future: fetchOrders(userId),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return CircularProgressIndicator();

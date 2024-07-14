@@ -8,6 +8,7 @@ import 'Controller/app_theme/LigthTheme.dart';
 import 'Controller/app_theme/ThemeModel.dart';
 import 'core/app_export.dart';
 import 'firebase_options.dart';
+import 'package:prayas_capital/auth/UserProvider.dart';
 
 var globalMessengerKey = GlobalKey<ScaffoldMessengerState>();
 
@@ -34,6 +35,7 @@ class MyApp extends StatelessWidget {
           providers: [
             ChangeNotifierProvider(create: (context) => ThemeModel(),),
             ChangeNotifierProvider(create: (context) => NiftyBankController(),),
+            ChangeNotifierProvider(create: (_) => UserProvider()),
           ],
           child: Builder(
             builder: (context) {

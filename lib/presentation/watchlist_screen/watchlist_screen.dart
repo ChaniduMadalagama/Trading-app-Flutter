@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
-import 'dart:io';
 import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:prayas_capital/core/utils/ColorFile.dart';
 import 'package:prayas_capital/presentation/orders_screen/place_order_screen.dart';
 import 'widgets/WatchListListViewWidget.dart';
-import 'dart:developer';
+import 'package:provider/provider.dart';
+import 'package:prayas_capital/auth/UserProvider.dart';
 
 class WatchlistScreen extends StatefulWidget {
   WatchlistScreen({Key? key}) : super(key: key);
@@ -21,13 +21,12 @@ class WatchlistScreen extends StatefulWidget {
 class _WatchlistScreenState extends State<WatchlistScreen> {
   TextEditingController searchController = TextEditingController();
   late Future<List<WatchListListViewWidget>> futureWatchListItems;
-  final WebSocketChannel channel =
-  IOWebSocketChannel.connect('ws://prayascapital.com:4000');
+  final WebSocketChannel channel = IOWebSocketChannel.connect('ws://prayascapital.com:4000');
 
   @override
   void initState() {
     super.initState();
-    futureWatchListItems = fetchWatchListItems();
+    futureWatchListItems = fetchWatchListItems(context);
   }
 
   @override
@@ -36,14 +35,21 @@ class _WatchlistScreenState extends State<WatchlistScreen> {
     super.dispose();
   }
 
-  Future<List<WatchListListViewWidget>> fetchWatchListItems() async {
+  Future<List<WatchListListViewWidget>> fetchWatchListItems(BuildContext context) async {
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    final userId = userProvider.user?.user_id;
+
+    if (userId == null) {
+      throw Exception('User ID is null');
+    }
+
     try {
       final response = await http.post(
         Uri.parse('http://prayascapital.com:5000/watchlist/latest'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
-        body: jsonEncode({'user_id': 1}),
+        body: jsonEncode({'user_id': userId}),
       );
 
       if (response.statusCode == 200) {
@@ -61,7 +67,7 @@ class _WatchlistScreenState extends State<WatchlistScreen> {
 
   Future<void> _refreshWatchList() async {
     setState(() {
-      futureWatchListItems = fetchWatchListItems();
+      futureWatchListItems = fetchWatchListItems(context);
     });
   }
 
@@ -151,6 +157,8 @@ class WatchListListViewWidget extends StatelessWidget {
   final String low;
   final String exchange;
   final String lastTradeTime;
+  final String change;
+  final String changeMark;
 
   WatchListListViewWidget({
     required this.titleName,
@@ -161,6 +169,8 @@ class WatchListListViewWidget extends StatelessWidget {
     required this.low,
     required this.exchange,
     required this.lastTradeTime,
+    required this.change,
+    required this.changeMark
   });
 
   factory WatchListListViewWidget.fromJson(Map<String, dynamic> json) {
@@ -173,6 +183,8 @@ class WatchListListViewWidget extends StatelessWidget {
       low: json['Low'].toString(),
       exchange: json['Exchange'].toString(),
       lastTradeTime: json['LastTradedTime'].toString(),
+      change: json['Change'],
+      changeMark: json['ChangeMark'],
     );
   }
 
@@ -181,7 +193,7 @@ class WatchListListViewWidget extends StatelessWidget {
     return ListTile(
       title: Text(
         titleName,
-        style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
+        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
       ),
       subtitle: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -191,23 +203,19 @@ class WatchListListViewWidget extends StatelessWidget {
             child: Row(
               children: [
                 Container(
-                  padding: EdgeInsets.fromLTRB(4, 2, 4, 2), // Adjust the padding value as needed
-                  decoration: BoxDecoration(
-                    color: Colors.redAccent,
-                    borderRadius: BorderRadius.circular(5.0), // Optional: Adds rounded corners
-                  ),
+                  padding: EdgeInsets.fromLTRB(4, 2, 4, 2),
                   child: Text(
-                    '$price',
+                    '$subTitleName',
                     style: TextStyle(
-                      fontSize: 13.0,
-                      color: Colors.white,
+                      fontSize: 13,
+                      color: Colors.grey,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
                 Container(
-                  margin: EdgeInsets.only(left: 16.0), // Add left margin here
-                  child: Text('$lastTradeTime (LTT)', style: TextStyle(fontSize: 12),),
+                  margin: EdgeInsets.only(left: 16.0),
+                  child: Text('$lastTradeTime (LTT)', style: TextStyle(fontSize: 12)),
                 ),
               ],
             ),
@@ -217,7 +225,22 @@ class WatchListListViewWidget extends StatelessWidget {
       trailing: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          Text(subTitleName),
+          Text(
+            '$price',
+            style: TextStyle(
+              fontSize: 16.0,
+              color: changeMark == '-' ? Colors.red : Colors.green,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          Text(
+            '$change',
+            style: TextStyle(
+              fontSize: 16.0,
+              color: changeMark == '-' ? Colors.red : Colors.green,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         ],
       ),
     );

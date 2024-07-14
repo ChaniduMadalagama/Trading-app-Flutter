@@ -222,7 +222,17 @@ class _PendingOrderDetailScreenState extends State<PendingOrderDetailScreen> {
         child: Column(
           children: [
             Stack(children: [
-              option_details_widget(context: context),
+              option_details_widget(
+                context: context,
+                  titleName: '',
+                price: '',
+                subTitleName: '',
+                percentage: '',
+                high: '',
+                low: '',
+                exchange: '',
+                lastTradeTime: ''
+              ),
               Padding(
                 padding: EdgeInsets.only(
                 //    top: MediaQuery.sizeOf(context).height / 3.4.h,

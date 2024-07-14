@@ -7,6 +7,9 @@ import 'package:prayas_capital/core/utils/ColorFile.dart';
 import 'package:prayas_capital/core/utils/StringFile.dart';
 import 'package:prayas_capital/widgets/custom_outlined_button.dart';
 import 'package:prayas_capital/widgets/custom_text_form_field.dart';
+import 'package:prayas_capital/auth/UserProvider.dart';
+import 'package:prayas_capital/auth/user_model.dart';
+import 'package:provider/provider.dart';
 
 class StartScreen extends StatefulWidget {
   StartScreen({Key? key}) : super(key: key);
@@ -47,6 +50,12 @@ class _StartScreenState extends State<StartScreen> {
     if (response.statusCode == 200) {
       final responseData = json.decode(response.body);
       if (responseData['logged_in'] == true) {
+        final user = UserModel.fromJson({
+          'username': responseData['username'],
+          'email': responseData['email'],
+          'user_id': responseData['id']
+        });
+        Provider.of<UserProvider>(context, listen: false).setUser(user);
         Navigator.pushNamed(
             context, AppRoutes.bottomNavigationBarScreenRoutesaaaaaaaa);
       } else {

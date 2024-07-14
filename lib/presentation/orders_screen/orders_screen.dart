@@ -4,7 +4,6 @@ import 'package:prayas_capital/core/utils/StringFile.dart';
 import 'package:prayas_capital/presentation/nifty50_banknifty_widget.dart';
 import 'package:prayas_capital/presentation/orders_screen/Widget/tebBar_widget.dart';
 
-
 import '../appBar_Widget/appBar_widget.dart';
 
 class OrdersScreen extends StatefulWidget {
