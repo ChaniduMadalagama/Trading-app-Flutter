@@ -7,6 +7,7 @@ import 'package:prayas_capital/widgets/TextView.dart';
 import 'package:prayas_capital/widgets/custom_outlined_button.dart';
 import 'package:prayas_capital/widgets/custom_text_form_field.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../Controller/app_theme/ThemeModel.dart';
 import '../../core/utils/ColorFile.dart';
@@ -36,6 +37,15 @@ class _AccountScreenState extends State<AccountScreen> {
       );
     },
   );
+
+  Future<void> _logout(BuildContext context) async {
+    // Clear stored user data
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
+
+    // Navigate to the login page
+    Navigator.pushReplacementNamed(context, AppRoutes.startScreen);
+  }
 
   @override
   void initState() {
@@ -168,7 +178,9 @@ class _AccountScreenState extends State<AccountScreen> {
                         imagePath: ImageConstant.imgFrameOnerrorcontainer24x24,
                         name: MyString.logout,
                         imageType: 'png',
-                        onTap: () {},
+                        onTap: () {
+                          _logout(context);
+                        },
                       ),
                       SizedBox(height: 50.v),
                       Text(
@@ -233,7 +245,7 @@ class _AccountScreenState extends State<AccountScreen> {
   }
 
   /// Section Widget
-  Widget _buildHelloSection(BuildContext context){
+  Widget _buildHelloSection(BuildContext context) {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(
@@ -263,7 +275,7 @@ class _AccountScreenState extends State<AccountScreen> {
             builder: (BuildContext context, value, Widget? child) {
               print(">>>>>>>>>>>>>>>>>>>>>>>>>${value.profile_name}");
               return Text(
-                 value.profile_name == null ? "" : value.profile_name.toString(),
+                value.profile_name == null ? "" : value.profile_name.toString(),
                 style: TextStyle(
                     color: AppColors.white,
                     fontSize: 28.h,
@@ -328,8 +340,8 @@ class _AccountScreenState extends State<AccountScreen> {
                                         ),
                                         SizedBoxView(height: 10),
                                         CustomOutlinedButton(
-                                          buttonStyle:
-                                              CustomButtonStyles.outlineBlackTL8,
+                                          buttonStyle: CustomButtonStyles
+                                              .outlineBlackTL8,
                                           text: "Confirm",
                                           height: 45,
                                         ),

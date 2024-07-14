@@ -3,6 +3,7 @@ import 'package:prayas_capital/presentation/BottomNavigationBarScreen/BottomNavi
 import 'package:prayas_capital/presentation/account_screen/account_screen.dart';
 import 'package:prayas_capital/presentation/fii_data_screen/dayWish_data_widget.dart';
 import 'package:prayas_capital/presentation/option_chain_screen/option_chain_screen.dart';
+import 'package:prayas_capital/presentation/start_screen/register_screen.dart';
 import 'package:prayas_capital/presentation/startup_screen/startup_screen.dart';
 import 'package:prayas_capital/presentation/start_screen/start_screen.dart';
 import 'package:prayas_capital/presentation/upcoming_ipo_screen/upcoming_ipo_screen.dart';
@@ -41,6 +42,7 @@ class AppRoutes {
       '/BottomNavigationBarScreen';
 
   static const String startupScreen = '/startup_screen';
+  static const String registerScreen = '/register_screen';
 
   static const String startScreen = '/start_screen';
 
@@ -107,6 +109,7 @@ class AppRoutes {
   static Map<String, WidgetBuilder> routes = {
     accountScreen: (context) => AccountScreen(),
     startupScreen: (context) => StartupScreen(),
+    registerScreen: (context) => RegisterScreen(),
     startScreen: (context) => StartScreen(),
     walkthroughFortyoneScreen: (context) => WalkthroughFortyoneScreen(),
     homeScreen: (context) => HomeScreen(),

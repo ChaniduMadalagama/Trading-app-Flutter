@@ -26,6 +26,7 @@ class CustomTextFormField extends StatelessWidget {
     this.fillColor,
     this.filled = false,
     this.validator,
+    
   }) : super(
           key: key,
         );
@@ -73,6 +74,8 @@ class CustomTextFormField extends StatelessWidget {
   final bool? filled;
 
   final FormFieldValidator<String>? validator;
+
+ // final String labelText;
 
   @override
   Widget build(BuildContext context) {
