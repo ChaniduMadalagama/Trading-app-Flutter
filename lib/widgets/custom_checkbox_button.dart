@@ -100,7 +100,7 @@ class CustomCheckboxButton extends StatelessWidget {
           value: value ?? false,
           onChanged: (value) {
             onChange(value!);
-          },
-        ),
-      );
+       },
+    ),
+  );
 }

@@ -1,6 +1,7 @@
 class MyString {
   /// >>>>> Login Screen String
-  static const String singInToYour = 'Sign in to your';
+  static const String singUpToYour = 'Siup in to your';
+  static const String LoginInToYour = 'Log in to your';
 
   static const String account = 'account';
 
@@ -171,15 +172,13 @@ class MyString {
 
   /// >>>>>>>>>>>>>>>>>>>>>>>>>> Place Order Screen <<<<<<<<<<<<<<<<< ////
 
- static const String placeOrder = "Place Order";
+  static const String placeOrder = "Place Order";
 
-
-/// >>>>>>>>>>>>>>>>>>>>>>>>>> Order Details Screen <<<<<<<<<<<<<<<<< ////
+  /// >>>>>>>>>>>>>>>>>>>>>>>>>> Order Details Screen <<<<<<<<<<<<<<<<< ////
 
   static const String orderDetails = "Order Details";
 
- ///  >>>>>>>>>>>>>>>>>>>>>>>>>>> Day Wise Date  <<<<<<<<<<<<<<<<<<<<<<<<<<< ///
+  ///  >>>>>>>>>>>>>>>>>>>>>>>>>>> Day Wise Date  <<<<<<<<<<<<<<<<<<<<<<<<<<< ///
 
   static const String dayWiseData = "Daywise data";
-
 }
