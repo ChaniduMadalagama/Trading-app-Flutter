@@ -180,7 +180,7 @@ class _PositionScreenState extends State<PositionScreen> {
                                   ),
                                   PositionScreenListViewWidget(
                                     id: item['id'],
-                                    titleName: item['name'],
+                                    titleName: item['unique_name'],
                                     subTitleName: item['created_at'],
                                     price: item['price'],
                                     lpt: item['price'],

@@ -6,6 +6,11 @@ import '../../widgets/App.dart';
 import '../../widgets/ButtonView.dart';
 import '../../widgets/custom_outlined_button.dart';
 import '../../widgets/custom_text_form_field.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'dart:async';
+import 'package:provider/provider.dart';
+import 'package:prayas_capital/auth/UserProvider.dart';
 
 class BasketOrdersOneScreen extends StatefulWidget {
   BasketOrdersOneScreen({Key? key})
@@ -32,6 +37,24 @@ class _BasketOrdersOneScreenState extends State<BasketOrdersOneScreen> with Sing
     _controller?.dispose();
     super.dispose();
   }
+
+  void handleSubmit(BuildContext context) async{
+    print('asasdsa');
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    final userId = userProvider.user?.user_id;
+
+    String name = basketNameController.text;
+    final response = await http.post(
+      Uri.parse('http://prayascapital.com:5000/baskets/create'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode({
+        'user_id': userId,
+        'name': name
+      }),
+    );
+}
 
   @override
   Widget build(BuildContext context) {
@@ -124,6 +147,9 @@ class _BasketOrdersOneScreenState extends State<BasketOrdersOneScreen> with Sing
                                           ),
                                           text: "Create",
                                           height: 45,
+                                          onPressed: () {
+                                            handleSubmit(context);
+                                          },
                                         ),
                                       ],
                                     ),

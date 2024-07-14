@@ -10,6 +10,8 @@ import 'package:prayas_capital/widgets/TextView.dart';
 import 'package:prayas_capital/presentation/watchlist_screen/watchlist_screen.dart';
 import 'package:prayas_capital/widgets/custom_outlined_button.dart';
 import 'package:prayas_capital/widgets/custom_text_form_field.dart';
+import 'package:provider/provider.dart';
+import 'package:prayas_capital/auth/UserProvider.dart';
 
 class PlaceOrderScreen extends StatefulWidget {
   final String titleName;
@@ -71,17 +73,17 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
     }
   }
 
-  void submitOrder(String order) {
+  void submitOrder(String order, userId) {
     final String lots = lotsTextEditingController.text;
     final String price = enterPriceTextEditingController.text;
     final Map<String, dynamic> item = {
       'lots': lots,
       'price': price,
       'unique_name': widget.titleName,
-      'nature': orderNature,
+      'nature': orderNature == "Regular" ? 1 : 2,
       'type': orderType,
       'quantity': 2,
-      'user_id': 1,
+      'user_id':userId,
       'ip_address': '192.168.667.332',
       'order_method': order,
     };
@@ -91,6 +93,9 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    final userId = userProvider.user?.user_id;
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
@@ -223,8 +228,8 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                                         padding: const EdgeInsets.only(top: 10),
                                         child: TextFormField(
                                           enableInteractiveSelection: false,
-                                          enabled: false,
-                                          readOnly: true,
+                                          enabled: orderNature == "Regular" ? false : true,
+                                          readOnly: orderNature == "Regular" ? true : false,
                                           focusNode: enterPriceFocusNode,
                                           controller: enterPriceTextEditingController,
                                           decoration: InputDecoration(
@@ -289,7 +294,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                                   GestureDetector(
                                     onTap: () {
                                       setState(() {
-                                        orderNature = 'Stop Loss';
+                                        orderNature = 'StopLoss';
                                       });
                                     },
                                     child: Container(
@@ -297,7 +302,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                                       width: MediaQuery.sizeOf(context).width / 2.7,
                                       decoration: BoxDecoration(
                                         border: Border.fromBorderSide(BorderSide()),
-                                        color: orderNature == 'Stop Loss' ? Colors.blue : Colors.white,
+                                        color: orderNature == 'StopLoss' ? Colors.blue : Colors.white,
                                       ),
                                       child: Center(child: Text("Stop Loss")),
                                     ),
@@ -408,7 +413,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                                 children: [
                                   ElevatedButton(
                                     onPressed: () {
-                                      submitOrder('buy');
+                                      submitOrder('buy', userId);
                                     },
                                     child: Text("BUY"),
                                     style: ElevatedButton.styleFrom(
@@ -419,7 +424,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                                   ),
                                   ElevatedButton(
                                     onPressed: () {
-                                      submitOrder('sell');
+                                      submitOrder('sell', userId);
                                     },
                                     child: Text("SELL"),
                                     style: ElevatedButton.styleFrom(

@@ -4,6 +4,8 @@ import 'dart:convert';
 import 'package:prayas_capital/core/utils/ColorFile.dart';
 import 'package:prayas_capital/presentation/basket_orders_screen/Widget/active_closed_listview_custom.dart';
 import 'package:prayas_capital/presentation/basket_orders_screen/active_basket_detail_screen.dart';
+import 'package:provider/provider.dart';
+import 'package:prayas_capital/auth/UserProvider.dart';
 
 class ActiveBasket extends StatefulWidget {
   ActiveBasket({Key? key}) : super(key: key);
@@ -18,11 +20,13 @@ class _ActiveBasketState extends State<ActiveBasket> {
   @override
   void initState() {
     super.initState();
-    futureBasketItems = fetchBasketItems();
+    futureBasketItems = fetchBasketItems(context);
   }
 
-  Future<List<BasketItem>> fetchBasketItems() async {
-    final response = await http.get(Uri.parse('http://prayascapital.com:5000/'));
+  Future<List<BasketItem>> fetchBasketItems(BuildContext context) async {
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    final userId = userProvider.user?.user_id;
+    final response = await http.get(Uri.parse('http://prayascapital.com:5000/baskets/active/${userId}'));
 
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body);

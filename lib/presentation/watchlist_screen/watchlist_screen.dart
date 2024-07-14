@@ -23,10 +23,21 @@ class _WatchlistScreenState extends State<WatchlistScreen> {
   late Future<List<WatchListListViewWidget>> futureWatchListItems;
   final WebSocketChannel channel = IOWebSocketChannel.connect('ws://prayascapital.com:4000');
 
+  void onDataReceived(data) async{
+    print(data);
+    List<WatchListListViewWidget> list = await futureWatchListItems;
+    for(var item in list){
+      // if(item['unique_name'] == data)
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     futureWatchListItems = fetchWatchListItems(context);
+    channel.stream.listen((data) {
+      onDataReceived(data);
+    });
   }
 
   @override
@@ -58,10 +69,10 @@ class _WatchlistScreenState extends State<WatchlistScreen> {
             .map<WatchListListViewWidget>((item) => WatchListListViewWidget.fromJson(item))
             .toList();
       } else {
-        throw Exception('Failed to load watchlist');
+        return List.empty();
       }
     } catch (e) {
-      throw Exception('Failed to load watchlist: $e');
+      return List.empty();
     }
   }
 

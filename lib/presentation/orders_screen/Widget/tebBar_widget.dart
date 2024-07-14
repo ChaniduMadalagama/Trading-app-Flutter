@@ -210,7 +210,7 @@ class Order {
   factory Order.fromJson(Map<String, dynamic> json) {
     return Order(
         id: json['id'],
-        name: json['name'],
+        name: json['unique_name'],
         status: json['status'],
         order: json['order_method'],
         price: json['price'],
