@@ -29,6 +29,7 @@ import '../presentation/basket_orders_screen/basket_orders_one_screen.dart';
 import '../presentation/fii_data_screen/oi_vs_time_chart_screen.dart';
 import '../presentation/month_summary_screen/month_summary_screen.dart';
 import '../presentation/orders_screen/place_order_screen.dart';
+import '../presentation/position_screen/view_order_screen.dart';
 import '../presentation/position_screen/position_history.dart';
 import '../presentation/splash_screen/splash_screen.dart';
 import '../presentation/theme_change/chenge_theme.dart';
@@ -100,6 +101,7 @@ class AppRoutes {
 
   static const String positionHistory = '/position_history';
   static const String placeOrderScreen = '/place_order_screen';
+  static const String viewPositionScreen = '/view_position_screen';
   static const String dayWishDataWidget = '/dayWish_data_widget';
 
   static Map<String, WidgetBuilder> routes = {
@@ -146,6 +148,7 @@ class AppRoutes {
       exchange: '',
       lastTradeTime: '',
     ),
+    // viewPositionScreen: (context) => ViewPositionScreen(),
     dayWishDataWidget: (context) => DayWishDataWidget(),
   };
 }

@@ -184,6 +184,7 @@ class _PositionScreenState extends State<PositionScreen> {
                                         .onSecondary,
                                   ),
                                   PositionScreenListViewWidget(
+                                    id: item['id'],
                                     titleName: item['name'],
                                     subTitleName: item['created_at'],
                                     price: item['price'],
