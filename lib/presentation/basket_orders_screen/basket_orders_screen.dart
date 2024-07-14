@@ -9,12 +9,17 @@ import 'package:prayas_capital/widgets/custom_outlined_button.dart';
 import 'package:prayas_capital/widgets/custom_text_form_field.dart';
 import '../../widgets/ButtonView.dart';
 
-class BasketOrdersScreen extends StatelessWidget {
+class BasketOrdersScreen extends StatefulWidget {
   BasketOrdersScreen({Key? key})
       : super(
           key: key,
         );
 
+  @override
+  State<BasketOrdersScreen> createState() => _BasketOrdersScreenState();
+}
+
+class _BasketOrdersScreenState extends State<BasketOrdersScreen> {
   TextEditingController nameController = TextEditingController();
 
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();

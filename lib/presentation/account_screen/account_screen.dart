@@ -111,10 +111,12 @@ class _AccountScreenState extends State<AccountScreen> {
                       SizedBox(height: 10.v),
                       _buildCategory(
                         context: context,
-                        imagePath: ImageConstant.imgFrame,
-                        name: MyString.resetAppData,
+                        imagePath: ImageConstant.imgCart,
+                        name: 'Basket Orders',
                         imageType: 'svg',
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.pushNamed(context, AppRoutes.basketOrdersScreen);
+                        },
                       ),
                       SizedBox(height: 10.v),
 

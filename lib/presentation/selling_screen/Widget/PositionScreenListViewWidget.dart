@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:prayas_capital/core/app_export.dart';
 import 'package:prayas_capital/core/utils/ColorFile.dart';
+import 'package:prayas_capital/presentation/position_screen/view_order_screen.dart';
 import '../../../core/utils/StringFile.dart';
 import '../../buy_screen/buy_screen.dart';
 
 class PositionScreenListViewWidget extends StatelessWidget {
+  int id;
   String titleName;
   String subTitleName;
   String date;
@@ -16,6 +18,7 @@ class PositionScreenListViewWidget extends StatelessWidget {
   String ipoOpenClose;
 
   PositionScreenListViewWidget({
+    required this.id,
     required this.titleName,
     required this.subTitleName,
     required this.date,
@@ -34,7 +37,7 @@ class PositionScreenListViewWidget extends StatelessWidget {
             PageTransition(
                 type: PageTransitionType.bottomToTop,
                 child: BuyScreen()));*/
-        Navigator.pushNamed(context, AppRoutes.placeOrderScreen);
+        Navigator.push(context, MaterialPageRoute(builder: (context) => ViewPositionScreen(id: id, titleName: titleName, subTitleName: subTitleName, price: price, percentage: '', high: '', low: '', exchange: '', lastTradeTime: '')));
       },
       child: Container(
         alignment: Alignment.center,
@@ -87,12 +90,12 @@ class PositionScreenListViewWidget extends StatelessWidget {
                   decoration: BoxDecoration(
                     border: Border.all(color: AppColors.black26),
                     borderRadius: BorderRadius.circular(30),
-                    color: Theme.of(context).colorScheme.secondary,
+                    color: ipoOpenClose == 'Open' ? Theme.of(context).colorScheme.secondary : Theme.of(context).colorScheme.error,
                   ),
                   child: Text(
                     ipoOpenClose,
                     style: TextStyle(
-                        color: AppColors.yellow,
+                        color: ipoOpenClose == 'Open' ? AppColors.yellow : AppColors.white,
                         fontWeight: FontWeight.w600,
                         fontSize: 13),
                   ),
